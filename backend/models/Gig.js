@@ -67,30 +67,6 @@ const gigSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  applications: [{
-    freelancer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    proposal: {
-      type: String,
-      required: true,
-      maxlength: 1000
-    },
-    bidAmount: {
-      type: Number,
-      required: true
-    },
-    status: {
-      type: String,
-      enum: ['pending', 'accepted', 'rejected'],
-      default: 'pending'
-    },
-    submittedAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
   assignedFreelancer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

@@ -4,11 +4,6 @@ const cors = require('cors');
 const passport = require('passport');
 require('dotenv').config();
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const googleAuthRoutes = require('./routes/googleAuth');
-const gigsRoutes = require('./routes/gigs');
-
 // Import passport config
 require('./config/passport');
 
@@ -20,9 +15,10 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/auth', googleAuthRoutes);
-app.use('/api/gigs', gigsRoutes);
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', require('./routes/googleAuth'));
+app.use('/api/gigs', require('./routes/gigs'));
+app.use('/api/applications', require('./routes/applications'));
 
 // Basic route
 app.get('/', (req, res) => {
@@ -40,6 +36,24 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
     timestamp: new Date().toISOString()
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
   });
 });
 

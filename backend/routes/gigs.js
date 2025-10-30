@@ -16,6 +16,13 @@ router.post('/', auth, requireRole(['client']), async (req, res) => {
       location
     } = req.body;
 
+    console.log('Creating gig with data:', {
+      title,
+      category,
+      budget,
+      client: req.user._id
+    });
+
     const gig = new Gig({
       title,
       description,
@@ -32,6 +39,8 @@ router.post('/', auth, requireRole(['client']), async (req, res) => {
     // Populate client details
     await gig.populate('client', 'name profilePicture');
 
+    console.log('Gig created successfully:', gig._id);
+
     res.status(201).json({
       success: true,
       message: 'Gig created successfully',
@@ -42,7 +51,8 @@ router.post('/', auth, requireRole(['client']), async (req, res) => {
     console.error('Create gig error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while creating gig'
+      message: 'Server error while creating gig',
+      error: error.message
     });
   }
 });
@@ -80,12 +90,14 @@ router.get('/', async (req, res) => {
     }
 
     const gigs = await Gig.find(query)
-      .populate('client', 'name profilePicture rating')
+      .populate('client', 'name profilePicture')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
     const total = await Gig.countDocuments(query);
+
+    console.log(`Found ${gigs.length} gigs`);
 
     res.json({
       success: true,
@@ -99,7 +111,8 @@ router.get('/', async (req, res) => {
     console.error('Get gigs error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching gigs'
+      message: 'Server error while fetching gigs',
+      error: error.message
     });
   }
 });
@@ -108,8 +121,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id)
-      .populate('client', 'name profilePicture rating')
-      .populate('applications.freelancer', 'name profilePicture skills rating');
+      .populate('client', 'name profilePicture')
+      .populate('assignedFreelancer', 'name profilePicture');
 
     if (!gig) {
       return res.status(404).json({
@@ -127,7 +140,8 @@ router.get('/:id', async (req, res) => {
     console.error('Get gig error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching gig'
+      message: 'Server error while fetching gig',
+      error: error.message
     });
   }
 });
@@ -209,8 +223,10 @@ router.delete('/:id', auth, requireRole(['client']), async (req, res) => {
 router.get('/client/my-gigs', auth, requireRole(['client']), async (req, res) => {
   try {
     const gigs = await Gig.find({ client: req.user._id })
-      .populate('applications.freelancer', 'name profilePicture')
+      .populate('assignedFreelancer', 'name profilePicture')
       .sort({ createdAt: -1 });
+
+    console.log(`Found ${gigs.length} gigs for client ${req.user._id}`);
 
     res.json({
       success: true,
@@ -221,7 +237,8 @@ router.get('/client/my-gigs', auth, requireRole(['client']), async (req, res) =>
     console.error('Get client gigs error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching gigs'
+      message: 'Server error while fetching gigs',
+      error: error.message
     });
   }
 });
