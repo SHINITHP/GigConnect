@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -56,24 +57,24 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full">
+    <div className="login-container">
+      <div className="login-content">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-3 mb-6 hover-lift">
-            <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-105">
-              <span className="text-white font-bold">G</span>
+        <div className="login-header">
+          <div className="logo-container hover-lift">
+            <div className="logo-icon">
+              <span className="logo-letter">G</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">GigConnect</span>
+            <span className="logo-text">GigConnect</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Welcome back</h1>
-          <p className="text-gray-600">Sign in to your account to continue</p>
+          <h1 className="login-title">Welcome back</h1>
+          <p className="login-subtitle">Sign in to your account to continue</p>
         </div>
 
         {/* Card */}
-        <div className="card-bolt p-8">
+        <div className="card-bolt">
           {error && (
-            <div className="alert-bolt-error mb-6">
+            <div className="alert-bolt-error">
               {error}
             </div>
           )}
@@ -81,7 +82,7 @@ const Login = () => {
           {/* Google Sign In */}
           <button 
             onClick={handleGoogleSignIn}
-            className="btn-bolt-google mb-6"
+            className="btn-bolt-google"
             disabled={googleLoading}
           >
             {googleLoading ? (
@@ -96,20 +97,14 @@ const Login = () => {
                   alt="Google" 
                   width="20" 
                   height="20" 
-                  className="transition-transform duration-200 group-hover:scale-110"
                 />
                 Continue with Google
               </>
             )}
           </button>
 
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-            </div>
+          <div className="divider">
+            <div className="divider-text">Or continue with email</div>
           </div>
 
           {/* Login Form */}
@@ -134,7 +129,7 @@ const Login = () => {
                 <label className="form-label-bolt">
                   Password
                 </label>
-                <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200">
+                <Link to="/forgot-password" className="forgot-link">
                   Forgot password?
                 </Link>
               </div>
@@ -151,7 +146,7 @@ const Login = () => {
 
             <button 
               type="submit" 
-              className={`btn-bolt-primary w-full ${loading ? 'btn-loading' : ''}`}
+              className={`btn-bolt-primary ${loading ? 'btn-loading' : ''}`}
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign in'}
@@ -159,9 +154,9 @@ const Login = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">
+            <p className="signup-link">
               Don't have an account?{' '}
-              <Link to="/register" className="text-gray-900 font-medium hover:text-gray-700 transition-colors duration-200">
+              <Link to="/register">
                 Sign up
               </Link>
             </p>
